@@ -18,7 +18,7 @@ int main (){
 	
 	volumeDaCaixa = (largura * altura * comprimento);
 	
-	printf("o volume da caixa eh: %f metros cubicos", volumeDaCaixa);
+	printf("o volume da caixa eh: %2.2f metros cubicos", volumeDaCaixa);
 	
 	return 0;
 }
