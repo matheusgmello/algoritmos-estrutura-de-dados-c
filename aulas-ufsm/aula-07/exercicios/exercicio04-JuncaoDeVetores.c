@@ -41,6 +41,12 @@ void juntaVetores(){
 		printf("%d\t", vetorB[i]);
 	}
 	
+	// PREENCHE O TERCEIRO VETOR COM 5 ELEMENTOS DO PRIMEIRO VETOR
+	for (i=0;i<5;i++){
+		vetorC[i] = vetorA[i];
+	}
+	
+	// PREENCHE O RESTANTE DO VETOR COM MAIS 5 ELEMENTOS
 	for (i = 0; i < 8; i++) {
     	vetorC[i + 5] = vetorB[i];
 	}

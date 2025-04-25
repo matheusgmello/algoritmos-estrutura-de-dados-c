@@ -3,6 +3,7 @@ Desenvolver um programa com uma função para ler 15 números, armazená-los em 
 total de números digitados maiores que 5.
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 void maiorQueCinco(){
 	

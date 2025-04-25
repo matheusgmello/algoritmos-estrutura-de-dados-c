@@ -6,6 +6,7 @@ correspondente. Apresentar os 2 vetores.
 vetor * vetor
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 void quadradoDoVetor(){
@@ -21,6 +22,8 @@ void quadradoDoVetor(){
 		printf("%d\t", vetorA[i]);
 		vetorB[i] = vetorA[i] * vetorA[i];
 	}
+
+	printf("\n");
 
 	for (i=0;i<5;i++){
 		printf("%d\t", vetorB[i]);

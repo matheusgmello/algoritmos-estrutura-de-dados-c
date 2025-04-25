@@ -4,17 +4,23 @@ Escrever um programa com uma função que leia N números reais, armazene-os em 
 #include <stdio.h>
 
 void inverteArray(){
-		
-	float vetorN[10];
 	
-	int i;
+	int n, i;
+
+	printf("digite o tamanho do vetor: ");
+	scanf("%d", &n);
+
+	float vetorN[n];
 	
-	for(i=0;i<10;i++){
+	
+	for(i=0;i<n;i++){
 		scanf("%f", &vetorN[i]);
 	}
 	
-	for(i=9; i>=0; i--){
-		printf("%.2f\n", vetorN[i]);
+	printf("\n");
+	
+	for(i=n-1; i>=0; i--){
+		printf("%.2f\t", vetorN[i]);
 	}
 	
 	
