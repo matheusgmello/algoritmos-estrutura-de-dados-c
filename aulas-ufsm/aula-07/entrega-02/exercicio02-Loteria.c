@@ -25,11 +25,12 @@ void loteria(){
 	int pontos=0;
 	
 	for(i=0;i<5;i++){
-		vetorR[i] =  rand() % 60 + 1;
+		vetorR[i] =  rand() % 60;
 	}
 	
 	for (i=0;i<10;i++){
-		vetorA[i] =  rand() % 60 + 1;
+		//scanf("%d", &vetorA[i]);
+		vetorA[i] =  rand() % 60;
 	}
 	
 	for(i=0;i<10;i++){
@@ -57,4 +58,8 @@ void loteria(){
 	
 	printf("voce fez %d pontos.\n", pontos);
 	
+	
+	if (pontos == 5){
+		printf("voce acertou toda a cartela\n");
+	}
 }

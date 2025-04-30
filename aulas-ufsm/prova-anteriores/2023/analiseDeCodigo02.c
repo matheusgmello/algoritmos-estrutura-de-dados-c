@@ -13,3 +13,9 @@ int main(){
 	
 	return 0;
 }
+
+// a) Mostrar na tela os valores de 1a10.
+// b) O laco não sera executado nenhuma vez.
+// c) o codigo não funciona corretamente.
+// d) Mostrara na tela o valor 6.
+// e) Mostrara a palavra count por 10 vezes.
