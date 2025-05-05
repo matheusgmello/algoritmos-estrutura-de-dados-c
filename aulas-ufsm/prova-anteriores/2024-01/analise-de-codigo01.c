@@ -4,8 +4,10 @@ int codigoProva(int valor){
   int a = 0;
   while (valor > 0){
     int digito = valor % 10;
-    a+= digito;
-    valor /= 10;
+    //a+= digito;
+    a = a + digito;
+    //valor /= 10;
+    valor = valor / 10;
   }
   return a;
 }
