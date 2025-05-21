@@ -25,6 +25,7 @@ Matheus Gabriel e Isaac - 2025 - 1 semestre
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define TAMANHO 5
 #define TENTATIVAS 10
@@ -35,6 +36,7 @@ void sorteiaPosicoes(int matriz[TAMANHO][TAMANHO]);
 void mostraAMatrizVisivel(int matriz[TAMANHO][TAMANHO]);
 void mostraAMatrizSecreta(int matriz[TAMANHO][TAMANHO]);
 float calculaPorcentagem(int acertos, int tentativas);
+int verificaInteiroDigitado(int minimo, int maximo, const char *mensagem);
 
 int main() {
     srand(time(NULL));
@@ -49,7 +51,7 @@ int main() {
 
         iniciaMatriz(matrizSecreta);
         iniciaMatriz(matrizVisivel);
-        sorteiaPosicoes(matrizSecreta);  // Preenche com os números escondidos (9)
+        sorteiaPosicoes(matrizSecreta);
 
         printf("============================\n");
         printf("======= Bem vindo ao =======\n");
@@ -63,41 +65,16 @@ int main() {
             tentativasRealizadas + 1, TENTATIVAS, acertos, NUMEROS_ESCONDIDOS);
             mostraAMatrizVisivel(matrizVisivel);
 
-            // pede uma linha valida (de 1 a TAMANHO)
-            do {
-                printf("Informe a linha (1 a %d): ", TAMANHO);
-                scanf("%d", &linha);
+            linha = verificaInteiroDigitado(1, TAMANHO, "Informe a linha (1 a 5): ") - 1;
+            coluna = verificaInteiroDigitado(1, TAMANHO, "Informe a coluna (1 a 5): ") - 1;
 
-                // verifica se a linha eh valida, caso o usuario digite algo fora do intervalo
-                if (linha < 1 || linha > TAMANHO) {
-                    printf("linha invalida, tente novamente por favor.\n\n");
-                }
-
-            } while (linha < 1 || linha > TAMANHO);
-            linha--;  // ajuste do vetor pro indice ficar correto (de 0 a 4)
-
-            // pede uma coluna valida (de 1 a TAMANHO)
-            do {
-                printf("Informe a coluna (1 a %d): ", TAMANHO);
-                scanf("%d", &coluna);
-
-                // verifica se a coluna eh valida, caso o usuario digite algo fora do intervalo
-                if (coluna < 1 || coluna > TAMANHO) {
-                    printf("coluna invalida, tente novamente por favor.\n\n");
-                }
-
-            } while (coluna < 1 || coluna > TAMANHO);
-            coluna--;  // ajuste do vetor pro indice ficar correto (de 0 a 4)
-
-            // verificacao se a posicao ja foi escolhida
             if (matrizVisivel[linha][coluna] != 0) {
                 printf("Posicao ja escolhida! Tente novamente.\n");
-                continue;  // nao conta como tentativa
+                continue;
             }
 
             tentativasRealizadas++;
 
-            // faz a verificacao se o jogador encontrou o 9 ou nao
             if (matrizSecreta[linha][coluna] == 9) {
                 printf("Acertou! Encontrou um 9!!!\n");
                 matrizVisivel[linha][coluna] = 9;
@@ -108,10 +85,10 @@ int main() {
             }
         }
 
-		printf("============================");
+        printf("============================");
         printf("\n====== FIM DE JOGO =========\n");
         mostraAMatrizVisivel(matrizVisivel);
-        mostraAMatrizSecreta(matrizSecreta);  // chama a funcao pra mostrar onde que tava os 9
+        mostraAMatrizSecreta(matrizSecreta);
         printf("\n====== RESULTADOS =========\n");
         printf("\nTotal de acertos: %d/%d\n", acertos, NUMEROS_ESCONDIDOS);
         printf("Tentativas usadas: %d/%d\n", tentativasRealizadas, TENTATIVAS);
@@ -126,6 +103,7 @@ int main() {
         do {
             printf("\nDeseja tentar novamente? (s/n): ");
             scanf(" %c", &jogarNovamente);
+            while (getchar() != '\n');  // limpa buffer
         } while (jogarNovamente != 's' && jogarNovamente != 'S' && jogarNovamente != 'n' && jogarNovamente != 'N');
 
     } while (jogarNovamente == 's' || jogarNovamente == 'S');
@@ -134,68 +112,78 @@ int main() {
     return 0;
 }
 
-// bota zero em todas as posicoes da matriz e inicializa a matriz
+// Lê um inteiro válido entre minimo e maximo (inclusive)
+int verificaInteiroDigitado(int minimo, int maximo, const char *mensagem) {
+    char buffer[100];
+    int valor;
+    int sucesso;
+
+    do {
+        printf("%s", mensagem);
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            printf("erro de leitura. tente novamente.\n");
+            continue;
+        }
+
+        buffer[strcspn(buffer, "\n")] = '\0';  // remove \n
+
+        sucesso = sscanf(buffer, "%d", &valor);
+
+        if (sucesso != 1 || valor < minimo || valor > maximo) {
+            printf("entrada invalida! digite um numero inteiro entre %d e %d.\n\n", minimo, maximo);
+        }
+
+    } while (sucesso != 1 || valor < minimo || valor > maximo);
+
+    return valor;
+}
+
 void iniciaMatriz(int matriz[TAMANHO][TAMANHO]) {
-	int i;
-	int j;
-	
-    for (i = 0; i < TAMANHO; i++) {
-        for (j = 0; j < TAMANHO; j++) {
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
             matriz[i][j] = 0;
         }
     }
 }
 
-// sorteia as posicoes que o 9 vai ficar (numeros escondidos)
 void sorteiaPosicoes(int matriz[TAMANHO][TAMANHO]) {
     int count = 0;
     while (count < NUMEROS_ESCONDIDOS) {
         int linha = rand() % TAMANHO;
         int coluna = rand() % TAMANHO;
-        if (matriz[linha][coluna] != 9) {  // aqui garante que nao vai repetir
+        if (matriz[linha][coluna] != 9) {
             matriz[linha][coluna] = 9;
             count++;
         }
     }
 }
 
-/** 
-funcao pra mostrar a matriz visivel (com os numeros que o jogador escolheu)
-e os que ele errou (-1)
-*/
 void mostraAMatrizVisivel(int matriz[TAMANHO][TAMANHO]) {
-	int i;
-	int j;
-	
     printf("\nMatriz atual:\n    ");
-    for (j = 0; j < TAMANHO; j++) printf("%d ", j + 1);
+    for (int j = 0; j < TAMANHO; j++) printf("%d ", j + 1);
     printf("\n   ");
-    for (j = 0; j < TAMANHO; j++) printf("--");
+    for (int j = 0; j < TAMANHO; j++) printf("--");
     printf("\n");
 
-    for (i = 0; i < TAMANHO; i++) {
+    for (int i = 0; i < TAMANHO; i++) {
         printf("%d | ", i + 1);
-        for (j = 0; j < TAMANHO; j++) {
+        for (int j = 0; j < TAMANHO; j++) {
             printf("%d ", matriz[i][j]);
         }
         printf("\n");
     }
 }
 
-// funcao pra mostrar onde tava os numeros escondidos (9)
 void mostraAMatrizSecreta(int matriz[TAMANHO][TAMANHO]) {
-	int i;
-	int j;
-	
     printf("\nPosicoes com os numeros escondidos:\n    ");
-    for (j = 0; j < TAMANHO; j++) printf("%d ", j + 1); 
+    for (int j = 0; j < TAMANHO; j++) printf("%d ", j + 1); 
     printf("\n   ");
-    for (j = 0; j < TAMANHO; j++) printf("--"); 
+    for (int j = 0; j < TAMANHO; j++) printf("--"); 
     printf("\n");
 
-    for (i = 0; i < TAMANHO; i++) {
+    for (int i = 0; i < TAMANHO; i++) {
         printf("%d | ", i + 1);
-        for (j = 0; j < TAMANHO; j++) {
+        for (int j = 0; j < TAMANHO; j++) {
             if (matriz[i][j] == 9) {
                 printf("9 ");
             } else {
@@ -206,7 +194,6 @@ void mostraAMatrizSecreta(int matriz[TAMANHO][TAMANHO]) {
     }
 }
 
-// calcula a porcentagem final de acertos do jogador
 float calculaPorcentagem(int acertos, int tentativas) {
     return tentativas > 0 ? (acertos * 100.0) / tentativas : 0;
 }
