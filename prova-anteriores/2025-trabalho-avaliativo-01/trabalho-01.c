@@ -55,6 +55,7 @@ int validaCodigoProduto(char codigo[]) {
 	
     if (strlen(codigo) != 8) return 0;
     for (k = 0; k < 8; k++){
+        // isalnum verifica se o caractere eh alfanumérico letra ou numero
         if (!isalnum(codigo[k])) return 0;
     }
     return 1;
@@ -83,18 +84,24 @@ void arrumaNomeProduto(char nome[], char nomeArrumado[]) {
   
     while (nome[i] != '\0')
 	{
+        // isspace verifica se o caractere eh um espaço (inclui tab, \n, etc.)
         if (isspace(nome[i])){
+            // evita adicionar espaços múltiplos consecutivos
             if (j > 0 && !isspace(nomeArrumado[j - 1])){
                 nomeArrumado[j++] = ' ';
             }
         } else 
 		{
+            // isalpha verifica se o caractere eh uma letra (A-Z ou a-z)
             if (palavraC && isalpha(nome[i])){
+                // toupper transforma a letra em grande
                 nomeArrumado[j++] = toupper(nome[i]);
                 palavraC = 0;
             } else{
+                // tolower transforma qualquer letra em pequena
                 nomeArrumado[j++] = tolower(nome[i]);
             }
+            // se o caractere for espaço, a proxima letra sera a primeira da proxima palavra
             if (isspace(nome[i + 1])) palavraC = 1;
         }
         i++;
@@ -122,7 +129,8 @@ int arrumaPreco(char preco[]){
         if (preco[k] == '.'){
             if (temPonto || k == 0 || preco[k + 1] == '\0') return 0;
             temPonto = 1;
-        }else if (!isdigit(preco[k])) {
+        }
+        else if (!isdigit(preco[k])) { // isdigit verifica se o caractere é um número entre '0' e '9'
             return 0;
         }else if (temPonto) {
             digitoDepoisDoPonto++;
