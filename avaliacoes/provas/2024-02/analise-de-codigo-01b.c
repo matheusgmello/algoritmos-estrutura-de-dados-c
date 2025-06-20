@@ -6,6 +6,8 @@ as correções necessárias e explique as razões das mudanças realizadas.
 #include <stdio.h>
 #include <string.h>
 
+#define N 20
+
 void concatenarStrings(char str1[], char str2[]) {
     int tamanho1 = strlen(str1);
     int tamanho2 = strlen(str2);
@@ -15,7 +17,6 @@ void concatenarStrings(char str1[], char str2[]) {
 }
 
 int main() {
-    int N = 20;
     char string1[N] = "Hello\0";
     char string2[N] = "world!\0";
     concatenarStrings(string1, string2);

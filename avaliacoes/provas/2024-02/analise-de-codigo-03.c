@@ -4,7 +4,7 @@
 void func(char p[100], int v, char s[100]){
   int i,k,j;
   for (i=0,j=0; i<= v; i++){
-    if ((p[i] == ' ') || p[i] (== '\0')){
+    if ((p[i] == ' ') || (p[i] == '\0')){
      for (k=0; k<i; k++){
         s[j+k] = p[i-1-k];
       }

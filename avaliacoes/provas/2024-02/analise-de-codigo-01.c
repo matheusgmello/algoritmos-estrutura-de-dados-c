@@ -37,9 +37,9 @@ int main() {
     printf("Digite a segunda palavra: ");
     scanf("%s", palavra2);
     if (saoIguais(palavra1, palavra2) == 0) {
-        printf("são iguais.\n");
+        printf("sao iguais.\n");
     } else {
-        printf("são diferentes.\n");
+        printf("sao diferentes.\n");
     }
     inverterString(palavra1);
     printf("%s\n", palavra1);

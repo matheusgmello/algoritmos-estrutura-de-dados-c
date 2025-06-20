@@ -37,8 +37,8 @@ Casos omissos devem ser tratados pelo desenvolvedor e fazem parte da avaliação
 #include <ctype.h>
 #include <time.h>
 
-#define MAX_PARTIDAS 3
-#define MAX_CLUBES 6
+#define MaxDePartidas 3
+#define MaxDeClubes 6
 
 struct Clube {
     char nome[41];
@@ -53,7 +53,7 @@ struct Partida {
     int golsVisitante;
 };
 
-void removerEspacosInternos(char str[]) {
+void removeEspacos(char str[]) {
     char temp[41];
     int j = 0;
     for (int i = 0; str[i] != '\0'; i++) {
@@ -65,13 +65,13 @@ void removerEspacosInternos(char str[]) {
     strcpy(str, temp);
 }
 
-void formatarNome(char nome[]) {
+void arrumaNome(char nome[]) {
     if (strlen(nome) > 0) {
         nome[0] = toupper(nome[0]);
     }
 }
 
-void gerarSigla(char nome[], char sigla[]) {
+void siglaAutomatica(char nome[], char sigla[]) {
     for (int i = 0; i < 3; i++) {
         if (nome[i] != '\0') {
             sigla[i] = toupper(nome[i]);
@@ -82,36 +82,27 @@ void gerarSigla(char nome[], char sigla[]) {
     sigla[3] = '\0';
 }
 
-int gerarGols() {
+int golsAutomatico() {
     return rand() % 6;
 }
 
-int nomeJaUtilizado(char nome[], struct Partida partidas[], int qtd) {
-    for (int i = 0; i < qtd; i++) {
-        if (strcmp(nome, partidas[i].clubeCasa.nome) == 0 ||
-            strcmp(nome, partidas[i].clubeVisitante.nome) == 0) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void lerClube(struct Clube *clube, struct Partida partidas[], int partidasRegistradas) {
+void leituraClube(struct Partida partidas[], int indicePartida, int ehCasa) {
     char nomeTemp[41];
-    do {
-        printf("nome do clube: ");
-        scanf(" %[^\n]", nomeTemp);
-        removerEspacosInternos(nomeTemp);
-        formatarNome(nomeTemp);
 
-        if (nomeJaUtilizado(nomeTemp, partidas, partidasRegistradas)) {
-            printf("esse clube ja foi cadastrado em outra partida, digite outro nome.\n");
-        }
-    } while (nomeJaUtilizado(nomeTemp, partidas, partidasRegistradas));
+    printf("nome do clube: ");
+    scanf(" %[^\n]", nomeTemp);
+    removeEspacos(nomeTemp);
+    arrumaNome(nomeTemp);
 
-    strcpy(clube->nome, nomeTemp);
-    gerarSigla(clube->nome, clube->sigla);
-    printf("sigla gerada: %s\n", clube->sigla);
+    if (ehCasa) {
+        strcpy(partidas[indicePartida].clubeCasa.nome, nomeTemp);
+        siglaAutomatica(partidas[indicePartida].clubeCasa.nome, partidas[indicePartida].clubeCasa.sigla);
+        printf("sigla gerada: %s\n", partidas[indicePartida].clubeCasa.sigla);
+    } else {
+        strcpy(partidas[indicePartida].clubeVisitante.nome, nomeTemp);
+        siglaAutomatica(partidas[indicePartida].clubeVisitante.nome, partidas[indicePartida].clubeVisitante.sigla);
+        printf("sigla gerada: %s\n", partidas[indicePartida].clubeVisitante.sigla);
+    }
 }
 
 void lerPartida(struct Partida partidas[], int indice, int id) {
@@ -119,13 +110,13 @@ void lerPartida(struct Partida partidas[], int indice, int id) {
 
     printf("\n=== cadastro da partida %d ===\n", id);
     printf("- clube da casa:\n");
-    lerClube(&partidas[indice].clubeCasa, partidas, indice);
+    leituraClube(partidas, indice, 1);
 
     printf("- clube visitante:\n");
-    lerClube(&partidas[indice].clubeVisitante, partidas, indice);
+    leituraClube(partidas, indice, 0);
 
-    partidas[indice].golsCasa = gerarGols();
-    partidas[indice].golsVisitante = gerarGols();
+    partidas[indice].golsCasa = golsAutomatico();
+    partidas[indice].golsVisitante = golsAutomatico();
 
     printf("gols gerados - %s: %d | %s: %d\n",
            partidas[indice].clubeCasa.sigla, partidas[indice].golsCasa,
@@ -138,7 +129,7 @@ void formatarSigla(char sigla[]) {
     }
 }
 
-void listarPartidas(struct Partida partidas[], int tam, char sigla[]) {
+void relatorioDePartidas(struct Partida partidas[], int tam, char sigla[]) {
     int encontrou = 0;
     printf("\npartidas do clube %s:\n", sigla);
     for (int i = 0; i < tam; i++) {
@@ -159,10 +150,10 @@ void listarPartidas(struct Partida partidas[], int tam, char sigla[]) {
 }
 
 void calcularPontuacoes(struct Partida partidas[], int tam) {
-    char siglas[MAX_CLUBES][4];
-    char nomes[MAX_CLUBES][41];
-    int pontos[MAX_CLUBES] = {0};
-    int saldo[MAX_CLUBES] = {0};
+    char siglas[MaxDeClubes][4];
+    char nomes[MaxDeClubes][41];
+    int pontos[MaxDeClubes] = {0};
+    int saldo[MaxDeClubes] = {0};
     int total = 0;
 
     for (int i = 0; i < tam; i++) {
@@ -198,28 +189,24 @@ void calcularPontuacoes(struct Partida partidas[], int tam) {
         saldo[vis] += partidas[i].golsVisitante - partidas[i].golsCasa;
     }
 
-    // ordenação por pontos e saldo de gols (bubble sort)
+    // ordenação por pontos e saldo
     for (int i = 0; i < total - 1; i++) {
         for (int j = 0; j < total - 1 - i; j++) {
             if (pontos[j] < pontos[j + 1] ||
                 (pontos[j] == pontos[j + 1] && saldo[j] < saldo[j + 1])) {
-                // troca pontos
                 int tempP = pontos[j];
                 pontos[j] = pontos[j + 1];
                 pontos[j + 1] = tempP;
 
-                // troca saldo
                 int tempS = saldo[j];
                 saldo[j] = saldo[j + 1];
                 saldo[j + 1] = tempS;
 
-                // troca nomes
                 char tempNome[41];
                 strcpy(tempNome, nomes[j]);
                 strcpy(nomes[j], nomes[j + 1]);
                 strcpy(nomes[j + 1], tempNome);
 
-                // troca siglas
                 char tempSigla[4];
                 strcpy(tempSigla, siglas[j]);
                 strcpy(siglas[j], siglas[j + 1]);
@@ -228,7 +215,6 @@ void calcularPontuacoes(struct Partida partidas[], int tam) {
         }
     }
 
-    // exibição
     printf("\n=== classificacao final ===\n");
     printf("%-20s %-6s %-8s %-6s\n", "clube", "sigla", "pontos", "saldo");
     printf("-------------------------------------------------\n");
@@ -237,7 +223,6 @@ void calcularPontuacoes(struct Partida partidas[], int tam) {
         printf("%-20s %-6s %-8d %-6d\n", nomes[i], siglas[i], pontos[i], saldo[i]);
     }
 
-    // campeao é agora o primeiro
     printf("\n=== campeao ===\n");
     printf("\tclube: %s (%s)\n", nomes[0], siglas[0]);
     printf("\tpontos: %d\n", pontos[0]);
@@ -245,21 +230,21 @@ void calcularPontuacoes(struct Partida partidas[], int tam) {
 }
 
 int main() {
-    struct Partida partidas[MAX_PARTIDAS];
+    struct Partida partidas[MaxDePartidas];
     char siglaBusca[4];
 
     srand(time(NULL));
 
-    for (int i = 0; i < MAX_PARTIDAS; i++) {
+    for (int i = 0; i < MaxDePartidas; i++) {
         lerPartida(partidas, i, i + 1);
     }
 
     printf("\ndigite a sigla do clube para listar partidas: ");
     scanf(" %3s", siglaBusca);
     formatarSigla(siglaBusca);
-    listarPartidas(partidas, MAX_PARTIDAS, siglaBusca);
+    relatorioDePartidas(partidas, MaxDePartidas, siglaBusca);
 
-    calcularPontuacoes(partidas, MAX_PARTIDAS);
+    calcularPontuacoes(partidas, MaxDePartidas);
 
     return 0;
 }
