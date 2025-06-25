@@ -26,9 +26,12 @@ int main() {
     char nome[51];
     char iniciais[51];
 
-    printf("Digite seu nome completo (ate 50 caracteres): ");
-    gets(nome); 
-    fflush(stdin); // Limpa o buffer de entrada
+    strcpy(nome, "matheus gabriel fleck de mello"); 
+
+
+    // printf("Digite seu nome completo (ate 50 caracteres): ");
+    // gets(nome); 
+    // fflush(stdin); // Limpa o buffer de entrada
 
     gerarIniciais(nome, iniciais);
 
