@@ -1,9 +1,9 @@
-# Algoritmos em C
+# Algoritmos e Estrutura de dados em C
 
-Este repositório contém implementações de algoritmos desenvolvidos durante as disciplinas de Algoritmos na Universidade Federal de Santa Maria (UFSM), bem como alguns exercícios desenvolvidos fora da universidade. Os códigos estão escritos em linguagem C e organizados conforme as aulas e exercícios propostos.
+Este repositório contém implementações de algoritmos desenvolvidos durante as disciplinas de Algoritmos e Estrutura de Dados na Universidade Federal de Santa Maria (UFSM).
 
 ## Conteúdos Abordados
-
+**Algoritmos**
 - **Algoritmos básicos**  
 - **Estruturas condicionais**  
 - **Switch case**  
@@ -14,6 +14,19 @@ Este repositório contém implementações de algoritmos desenvolvidos durante a
 - **Funções**  
 - **Referências de memória**  
 - **Structs**  
+
+**Estrutura de Dados**
+- **Ponteiros**  
+- **Passagem de parâmetro por referência**  
+- **Alocação dinâmica de memória**  
+- **Listas encadeadas**  
+- **Pilhas**  
+- **Filas**  
+- **Recursividades**  
+- **Análise de árvores binárias**  
+- **Pesquisa em tabelas ordenadas e não ordenadas**  
+- **Métodos de ordenação de dados** 
+- **Análise de grafos**
 
 ## Como Utilizar
 

@@ -11,7 +11,7 @@ feitoemaula
 
 # Ignorar qualquer arquivo sem extensão (geralmente executáveis)
 # na raiz do projeto
-/[a-zA-Z0-9]*
+
 # Ignorar qualquer arquivo sem extensão (geralmente executáveis)
 
 
