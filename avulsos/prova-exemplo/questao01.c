@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 struct Livros {
   int codigo;
   char titulo[50];

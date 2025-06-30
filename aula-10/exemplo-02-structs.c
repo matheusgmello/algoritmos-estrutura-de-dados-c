@@ -26,15 +26,15 @@ int main(){
    	 scanf("%d",&posto[k].codigo);
    	 fflush(stdin);
    	 gets(posto[k].nome);
-   	 scanf("%f", &posto[k].prNormal);
-   	 posto[k].prEstudante = posto[k].prNormal / 2;
+   	 scanf("%f", &posto[k].precoNormal);
+   	 posto[k].precoEstudante = posto[k].precoNormal / 2;
     }
     
     for(k=0; k<5; k++){
    	 printf("%d",posto[k].codigo);
    	 puts(posto[k].nome);
-   	 printf("%.2f", posto[k].prNormal);
-   	 printf("%.2f", posto[k].prEstudante);
+   	 printf("%.2f", posto[k].precoNormal);
+   	 printf("%.2f", posto[k].precoEstudante);
     }
     return 0;    
 }
