@@ -15,60 +15,58 @@ Implementar uma função exibirTarefas que percorre a lista e imprime todos os d
 #include <stdlib.h>
 #include <string.h>
 
-struct Tarefa {
+typedef struct Tarefa {
     int id;
     char descricao[100];
-    char prioridade;
+    char prioridade; // 'A', 'M' ou 'B'
     struct Tarefa* proximo;
-};
+} Tarefa;
 
-void adicionarTarefa(struct Tarefa** lista, int id, char* descricao, char prioridade) {
-    struct Tarefa* nova = (struct Tarefa*)malloc(sizeof(struct Tarefa));
+int prioridadeValor(char p) {
+    if (p == 'A') return 3;
+    if (p == 'M') return 2;
+    return 1; // 'B'
+}
+
+Tarefa* adicionarTarefa(Tarefa* lista, int id, char* descricao, char prioridade) {
+    Tarefa* nova = (Tarefa*)malloc(sizeof(Tarefa));
     nova->id = id;
     strcpy(nova->descricao, descricao);
     nova->prioridade = prioridade;
     nova->proximo = NULL;
 
-    if (*lista == NULL) {
-        *lista = nova;
-        return;
+    // insere no início se a lista estiver vazia ou se a nova for mais prioritária
+    if (!lista || prioridadeValor(prioridade) > prioridadeValor(lista->prioridade)) {
+        nova->proximo = lista;
+        return nova;
     }
 
-    struct Tarefa *atual = *lista, *anterior = NULL;
-    while (atual) {
-        if (prioridade == 'A' && atual->prioridade != 'A'){
-        	break;
-		}
-        if (prioridade == 'M' && atual->prioridade == 'B') {
-        	break;
-		}
-        anterior = atual;
+    Tarefa* atual = lista;
+    while (atual->proximo && prioridadeValor(prioridade) <= prioridadeValor(atual->proximo->prioridade)) {
         atual = atual->proximo;
     }
-    if (anterior == NULL) {
-        nova->proximo = *lista;
-        *lista = nova;
-    } else {
-        nova->proximo = atual;
-        anterior->proximo = nova;
-    }
+
+    nova->proximo = atual->proximo;
+    atual->proximo = nova;
+    return lista;
 }
 
-void exibirTarefas(struct Tarefa* lista) {
+void exibirTarefas(Tarefa* lista) {
     while (lista) {
-        printf("ID: %d\n", lista->id);
-        printf("Descricao: %s\n", lista->descricao);
-        printf("Prioridade: %c\n\n", lista->prioridade);
+        printf("ID: %d\nDescricao: %s\nPrioridade: %c\n\n",
+               lista->id, lista->descricao, lista->prioridade);
         lista = lista->proximo;
     }
 }
 
 int main() {
-    struct Tarefa* lista = NULL;
-    adicionarTarefa(&lista, 1, "Estudar C", 'M');
-    adicionarTarefa(&lista, 2, "Fazer compras", 'B');
-    adicionarTarefa(&lista, 3, "Entregar trabalho", 'A');
-    adicionarTarefa(&lista, 4, "Ler livro", 'M');
+    Tarefa* lista = NULL;
+
+    lista = adicionarTarefa(lista, 1, "Estudar C", 'M');
+    lista = adicionarTarefa(lista, 2, "Fazer compras", 'B');
+    lista = adicionarTarefa(lista, 3, "Entregar trabalho", 'A');
+    lista = adicionarTarefa(lista, 4, "Ler livro", 'M');
+
     exibirTarefas(lista);
     return 0;
 }
