@@ -28,6 +28,45 @@ c. para uma aplicacao em que os dados sao constantemente removidos e adicionados
 
 2 c -explique como a operacao de remocao em uma arvore de busca binaria é realizada e quais sao os casos a serem considerados
 
+3. Analisando o codigo abaixo e a representacao hierarquica da arvore binaria, mostre qual saida correta apos  a execucao da funcao. Assuma que a chamada funcao insert retorna 
+um ponteiro para a raiz da arvore.
+
+```c
+#include <stdio.h>
+
+struct tree {
+  char info;
+  struct tree *left;
+  struct tree *right;
+}
+
+typedef struct tree Tree;
+
+void print(Tree *t){
+  if (t != NULL){
+    if(t->left){
+      print(t->left);
+    }
+    if (t->right){
+      printf(t->right);
+    }
+    printf("%c", t->info);
+  }
+}
+
+int main(){
+  Tree *t = NULL;
+
+  t = insert(t);
+  print(t);
+
+  return 0;
+}
+
+// SAÍDA X F D B T E C A
+```
+
+
 4. Estruturas do tipo Filha e Pilha diferem apenas na ordem de remocao de seus elementos. A insercao é realizada seguindo o mesmo criterio. Essa afirmacao está correta justifique.
 
 5. analise o codigo, o que sera apresentado na linha 12?
@@ -61,3 +100,11 @@ int main (){
 (V) Uma funcao recursiva que nao possui caso base pode resultar em uma pilha de chamadas que nunca é liberada
 
 (V) Uma arvore binaria cheia sempre é tambem uma arvore estritamente binaria?
+
+
+7. Assumindo duas listas encadeadas não vazia, que armazenam valores inteiros, desenvolva um algoritmo para verificar quantas vezes cada elemento da primeira lista 
+aparece na segunda da lista. Mostrar também os endereços de memoria desses elementos na segunda lista. 
+Não há necessidade de criar o registro nem as funções de inserção e main. O protótipo da função deve ser o seguinte:
+
+void contaOcorrencias (Lista *L, Lista *L2);
+

@@ -45,6 +45,43 @@ posfixado: percorremos para esquerda, percorremos para direita, e analisamos a r
 A operacao de remocao é feita verificamente primeiramente qual o caso, a ser utilizado, se quero remover uma folha (apenas removo e o pai recebe NULL no lugar onde o endereco do filho estava), se o nó que quero remover possui apenas 
 um filho (aloco o filho onde do nó no pai e vice-versa e removo) e se, o nó tem + de 1 filho (entao o novo pai ou sera o no mais da esquerda, ou será necessario uma verificacao mais complexa).
 
+. Analisando o codigo abaixo e a representacao hierarquica da arvore binaria, mostre qual saida correta apos  a execucao da funcao. Assuma que a chamada funcao insert retorna 
+um ponteiro para a raiz da arvore.
+
+```c
+#include <stdio.h>
+
+struct tree {
+  char info;
+  struct tree *left;
+  struct tree *right;
+}
+
+typedef struct tree Tree;
+
+void print(Tree *t){
+  if (t != NULL){
+    if(t->left){
+      print(t->left);
+    }
+    if (t->right){
+      printf(t->right);
+    }
+    printf("%c", t->info);
+  }
+}
+
+int main(){
+  Tree *t = NULL;
+
+  t = insert(t);
+  print(t);
+
+  return 0;
+}
+
+// SAÍDA X F D B T E C A
+```
 
 4. Estruturas do tipo Filha e Pilha diferem apenas na ordem de remocao de seus elementos. A insercao é realizada seguindo o mesmo criterio. Essa afirmacao está correta justifique.
 
@@ -75,11 +112,47 @@ Será apresentado na linha 12, o valor 10. A funcao recursiva verifica se o nume
 6. Indique se cada umas das afirmacoes abaixo é verdadeira (V) ou F. justifique as falsas.
 
 (F) Em uma arvore de busca, um nó pode ter apenas um filho esquerda, ou um filho direito, mas nunca ambos.
+- em uma arvore de busca binaria, pode ter filhos em ambos do lado, seja esquerda ou direita, ou tbm pode nao ter filhos a unica limitacao que ela deve
+ter, é ter no maximo dois filhos.
 
 (V) A recursao pode ser utilizada para simplificar a implementacao de algoritmos que operam em estruturas de dados como arvore e grafos?
 
 (F) O numero de chamadas recursivas em uma funcao nao afeta o uso de memoria?
+- Sim, ela afeta o uso de memoria, principalmente se não tiver caso-base na funcao recursiva, caso não tenha iremos estourar a memoria do computador, causando um programa infinito,
+e tbm quanto maior for a pilha de funcoes recursivas maior o consumo de memoria, podendo ocasionar num mal processamento do programa.
+
 
 (V) Uma funcao recursiva que nao possui caso base pode resultar em uma pilha de chamadas que nunca é liberada
 
 (V) Uma arvore binaria cheia sempre é tambem uma arvore estritamente binaria?
+
+
+
+7. Assumindo duas listas encadeadas não vazia, que armazenam valores inteiros, desenvolva um algoritmo para verificar quantas vezes cada elemento da primeira lista 
+aparece na segunda da lista. Mostrar também os endereços de memoria desses elementos na segunda lista. 
+Não há necessidade de criar o registro nem as funções de inserção e main. O protótipo da função deve ser o seguinte:
+
+void contaOcorrencias (Lista *L, Lista *L2);
+```c
+void contaOcorrencias (Lista *L , Lista *L2){
+	
+	int count = 0;
+	lista *aux = l2;
+	
+	if (l != NULL){
+		while (aux){
+			if (aux->valor == L->valor){
+				count ++;
+				printf("encontrado no endereco %x\n", aux);
+			}
+			aux = aux->prox;
+		}
+		
+	}
+	printf("o numero %d foi encontrado %d de vezes", l->valor, count);
+	if (l->prox != NULL){
+		contaOcorrencias(l->prox, l2);
+	}
+	
+}
+```
