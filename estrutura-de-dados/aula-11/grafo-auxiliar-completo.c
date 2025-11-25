@@ -80,9 +80,9 @@ No *removeNo(No *inicio, int verticeParaRemover){
 
     // Caso 1: O no a ser removido e o 'inicio'
     if(atual != NULL && atual->vertice == verticeParaRemover){
-        inicio = atual->prox; // Muda o inicio
-        free(atual);         // Libera a memoria
-        return inicio;       // Retorna o novo inicio
+        inicio = atual->prox; 
+        free(atual);         
+        return inicio;      
     }
 
     // Caso 2: Procura o no, mantendo o rastro do anterior
@@ -97,9 +97,9 @@ No *removeNo(No *inicio, int verticeParaRemover){
     }
 
     // O no foi encontrado (agora 'atual' aponta para ele)
-    anterior->prox = atual->prox; // Desliga o no 'atual' da lista
-    free(atual);                   // Libera a memoria
-    return inicio;               // O inicio permanece o mesmo
+    anterior->prox = atual->prox;
+    free(atual);                   
+    return inicio;              
 }
 
 /*
@@ -116,7 +116,7 @@ void removeAresta(Grafo *g, int origem, int destino){
     // 1. Remove o no 'destino' da lista de adjacencia da 'origem'
     g->listaAdj[origem].inicio = removeNo(g->listaAdj[origem].inicio, destino);
 
-    // 2. Se nao for um laco (self-loop), remove o no 'origem' da lista de adjacencia do 'destino'
+    // 2. Se nao for um laco, remove o no 'origem' da lista de adjacencia do 'destino'
     if(origem != destino){
         g->listaAdj[destino].inicio = removeNo(g->listaAdj[destino].inicio, origem);
     }
@@ -130,8 +130,7 @@ void removeAresta(Grafo *g, int origem, int destino){
  * Isso permite verificar se as arestas foram adicionadas corretamente.
  */
 void imprimeGrafo(Grafo *g){
-  int i;
-  for(i = 0; i < g->numVertices; i++){
+  for(int i = 0; i < g->numVertices; i++){
     printf("Vertice %d: ", i);
     No *temp = g -> listaAdj[i].inicio;
     while(temp != NULL){
@@ -142,13 +141,104 @@ void imprimeGrafo(Grafo *g){
     
   }
 }
+/*
+ * A funcao 'grauVertice' calcula e retorna o grau de um vertice.
+ * O grau de um vertice em um grafo **nao-direcionado** (sem arestas paralelas) e o numero de arestas incidentes a ele.
+ * Como a implementacao usa listas de adjacencia, o grau e o numero de nos na lista de adjacencia do vertice.
+ * Recebe um ponteiro para o 'Grafo' e o numero do 'vertice' cujo grau se deseja calcular.
+ * A funcao percorre a lista de adjacencia do 'vertice', contando quantos nos (vizinhos) existem.
+ */
+int grauVertice(Grafo *g, int vertice){
+    if (vertice < 0 || vertice >= g->numVertices) {
+        return -1; // Vertice invalido
+    }
+    int grau = 0;
+    No *temp = g->listaAdj[vertice].inicio;
+    while(temp != NULL){
+        grau++;
+        temp = temp->prox;
+    }
+    return grau;
+}
+
+/*
+ * A funcao 'saoAdjacentes' verifica se dois vertices, 'origem' e 'destino', sao adjacentes.
+ * Vertices sao adjacentes se existe uma aresta entre eles.
+ * Como a implementacao usa listas de adjacencia e o grafo e **nao-direcionado**, basta verificar se 'destino' esta na lista de adjacencia de 'origem' (ou vice-versa).
+ * Recebe um ponteiro para o 'Grafo' e os vertices 'origem' e 'destino'.
+ * Retorna 1 (verdadeiro) se 'origem' e 'destino' sao adjacentes, e 0 (falso) caso contrario.
+ */
+int saoAdjacentes(Grafo *g, int origem, int destino){
+    if (origem < 0 || origem >= g->numVertices || destino < 0 || destino >= g->numVertices) {
+        return 0; // Vertices invalidos
+    }
+    No *temp = g->listaAdj[origem].inicio;
+    while(temp != NULL){
+        if(temp->vertice == destino){
+            return 1; // Encontrou 'destino' na lista de 'origem', entao sao adjacentes
+        }
+        temp = temp->prox;
+    }
+    return 0; // Nao encontrou
+}
+
+/*
+ * A funcao 'maiorGrau' encontra e retorna o maior grau entre todos os vertices do grafo.
+ * Ela itera por todos os vertices (de 0 ate 'numVertices' - 1).
+ * Para cada vertice, ela chama a funcao auxiliar 'grauVertice' para obter seu grau.
+ * O maior grau encontrado durante a iteracao e armazenado e retornado.
+ */
+int maiorGrau(Grafo *g){
+    int maxGrau = 0;
+    int grauAtual;
+    int i;
+    for(i = 0; i < g->numVertices; i++){
+        grauAtual = grauVertice(g, i);
+        if(grauAtual > maxGrau){
+            maxGrau = grauAtual;
+        }
+    }
+    return maxGrau;
+}
+
+/*
+ * A funcao 'contaArestas' calcula o numero total de arestas no grafo.
+ * Em um grafo nao-direcionado, a soma dos graus de todos os vertices e igual
+ * ao dobro do numero de arestas (Teorema do Aperto de Mao).
+ *
+ * A funcao itera por todos os vertices, soma os graus de cada um usando
+ * 'grauVertice', e divide o total por 2.
+ */
+int contaArestas(Grafo *g){
+    int somaGraus = 0;
+    int i;
+    for(i = 0; i < g->numVertices; i++){
+        somaGraus += grauVertice(g, i);
+    }
+    // Retorna a metade da soma dos graus
+    return somaGraus / 2;
+}
+
+void liberaGrafo(Grafo *g){
+    for (int i = 0; i < g->numVertices; i++) {
+        No *atual = g->listaAdj[i].inicio;
+        No *proximo;
+        
+        while (atual != NULL) {
+            proximo = atual->prox; // Guarda o ponteiro para o proximo antes de liberar o atual
+            free(atual);
+            atual = proximo; // Move para o proximo no
+        }
+        g->listaAdj[i].inicio = NULL; // Opcional: Garante que a lista fique vazia após a liberação
+    };
+}
 
 /*
  * A funcao 'main' e o ponto de entrada do programa.
  * Ela declara uma estrutura 'Grafo' e define o numero de vertices ('vertices' = 5).
  * Chama 'inicializaGrafo' para preparar a estrutura.
  * Adiciona algumas arestas ao grafo usando a funcao 'criaGrafo'. Por exemplo, cria uma aresta entre 1 e 2, 3 e 4, e um laco no vertice 0 (0-0).
- * Finalmente, chama 'imprimeGrafo' para exibir a estrutura de lista de adjacencia do grafo.
+ * Finalmente, chama 'imprimeGrafo' para exibir a estrutura de lista de adjacencia do grafo e demonstra o uso das novas funcoes.
  */
 int main(){
   Grafo g;
@@ -158,9 +248,33 @@ int main(){
   
   criaGrafo(&g, 1, 2);
   criaGrafo(&g, 3, 4);
-  criaGrafo(&g, 0, 0);
-  imprimeGrafo(&g);
+  criaGrafo(&g, 0, 0); // Laco em 0, grau 2
+  criaGrafo(&g, 1, 3); // Nova aresta (1-3)
+  criaGrafo(&g, 1, 4); // Nova aresta (1-4)
   
+  printf("## Estado Inicial do Grafo\n");
+  imprimeGrafo(&g);
+  printf("--------------------------------------\n");
+
+  printf("## Teste das Funcoes\n");
+  
+  // Teste do grauVertice
+  int v_teste = 1;
+  printf("Grau do Vertice %d: %d\n", v_teste, grauVertice(&g, v_teste)); 
+  
+  // Teste do saoAdjacentes
+  int u_adj = 1, v_adj = 4;
+  printf("Os vertices %d e %d sao adjacentes? %s\n", u_adj, v_adj, saoAdjacentes(&g, u_adj, v_adj) ? "Sim" : "Nao"); 
+  
+  // Teste do maiorGrau
+  printf("Maior grau no grafo: %d\n", maiorGrau(&g)); 
+  
+  // Teste do contaArestas
+  printf("Numero total de arestas: %d\n", contaArestas(&g)); 
+  printf("--------------------------------------\n");
+  
+  // Chamada da nova função de liberação de memória
+  liberaGrafo(&g);
   
   return 0;
 }

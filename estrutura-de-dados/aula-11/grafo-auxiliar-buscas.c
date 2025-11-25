@@ -17,6 +17,61 @@ typedef struct Grafo{
   int numVertices;
 }Grafo;
 
+// Estrutura Simples de Fila para BFS
+typedef struct Fila {
+    int itens[MAX];
+    int frente;
+    int tras;
+} Fila;
+
+/*
+ * A funcao 'criaFila' inicializa os ponteiros 'frente' e 'tras' da fila.
+ */
+void criaFila(Fila *f) {
+    f->frente = -1;
+    f->tras = -1;
+}
+
+/*
+ * A funcao 'estaVazia' verifica se a fila esta vazia.
+ * Retorna 1 (verdadeiro) se estiver vazia e 0 (falso) caso contrario.
+ */
+int estaVazia(Fila *f) {
+    return f->tras == -1;
+}
+
+/*
+ * A funcao 'adicionarFila' (enqueue) insere um 'vertice' no final da fila.
+ */
+void adicionarFila(Fila *f, int vertice) {
+    if (f->tras == MAX - 1) {
+        printf("Erro: Fila Cheia\n");
+    } else {
+        if (f->frente == -1) f->frente = 0;
+        f->tras++;
+        f->itens[f->tras] = vertice;
+    }
+}
+
+/*
+ * A funcao 'removerFila' (dequeue) remove e retorna o vertice no inicio da fila.
+ * Retorna -1 se a fila estiver vazia.
+ */
+int removerFila(Fila *f) {
+    int item;
+    if (estaVazia(f)) {
+        item = -1;
+    } else {
+        item = f->itens[f->frente];
+        f->frente++;
+        if (f->frente > f->tras) {
+            f->frente = f->tras = -1; // Reseta a fila se estiver vazia
+        }
+    }
+    return item;
+}
+
+
 /*
  * A funcao 'criaNo' e uma funcao auxiliar que aloca memoria dinamicamente para um novo no da lista de adjacencia.
  * Recebe o numero do 'vertice' que o novo no ira representar.
@@ -144,23 +199,129 @@ void imprimeGrafo(Grafo *g){
 }
 
 /*
+ * A funcao 'buscaEmLargura' percorre o grafo a partir de um 'verticeInicial'
+ * usando o algoritmo BFS, que explora os vizinhos mais proximos antes de
+ * se mover para os de proximo nivel.
+ *
+ * Usa um array 'visitados' e uma fila para gerenciar a ordem de exploracao.
+ */
+void buscaEmLargura(Grafo *g, int verticeInicial) {
+    Fila filaDeExploracao;
+    int verticeAtual;
+    int i;
+    // Array para marcar os vertices visitados (0 = Não visitado, 1 = Visitado)
+    int visitados[MAX];
+
+    // 1. Inicializa o array de visitados e a fila
+    for (i = 0; i < g->numVertices; i++) {
+        visitados[i] = 0;
+    }
+    criaFila(&filaDeExploracao);
+
+    // 2. Começa a exploração pelo vertice inicial
+    visitados[verticeInicial] = 1;
+    adicionarFila(&filaDeExploracao, verticeInicial);
+    printf("BFS (Busca em Largura) a partir do vertice %d: ", verticeInicial);
+
+    // 3. Explora o grafo
+    while (!estaVazia(&filaDeExploracao)) {
+        verticeAtual = removerFila(&filaDeExploracao);
+        printf("%d ", verticeAtual);
+
+        // Percorre a lista de adjacencia do vertice atual
+        No *vizinho = g->listaAdj[verticeAtual].inicio;
+        while (vizinho != NULL) {
+            int v_vizinho = vizinho->vertice;
+
+            if (visitados[v_vizinho] == 0) {
+                visitados[v_vizinho] = 1;
+                adicionarFila(&filaDeExploracao, v_vizinho);
+            }
+            vizinho = vizinho->prox;
+        }
+    }
+    printf("\n");
+}
+
+/*
+ * A funcao auxiliar 'buscaEmProfundidade_recursiva' realiza a travessia DFS.
+ * Ela usa recursao para explorar o maximo possivel em cada ramo antes de
+ * retroceder (backtrack).
+ */
+void buscaEmProfundidade_recursiva(Grafo *g, int verticeAtual, int *visitados) {
+    // 1. Marca o vertice atual como visitado e imprime
+    visitados[verticeAtual] = 1;
+    printf("%d ", verticeAtual);
+
+    // 2. Percorre a lista de adjacencia
+    No *vizinho = g->listaAdj[verticeAtual].inicio;
+    while (vizinho != NULL) {
+        int v_vizinho = vizinho->vertice;
+
+        // 3. Se o vizinho nao foi visitado, chama a DFS recursivamente
+        if (visitados[v_vizinho] == 0) {
+            buscaEmProfundidade_recursiva(g, v_vizinho, visitados);
+        }
+        vizinho = vizinho->prox;
+    }
+}
+
+/*
+ * A funcao 'buscaEmProfundidade' é a função principal que prepara o ambiente
+ * e inicia a travessia DFS a partir de um 'verticeInicial'.
+ */
+void buscaEmProfundidade(Grafo *g, int verticeInicial) {
+    int visitados[MAX];
+    int i;
+    // Inicializa o array de visitados
+    for (i = 0; i < g->numVertices; i++) {
+        visitados[i] = 0;
+    }
+
+    printf("DFS (Busca em Profundidade) a partir do vertice %d: ", verticeInicial);
+    // Inicia a recursao
+    buscaEmProfundidade_recursiva(g, verticeInicial, visitados);
+    printf("\n");
+}
+
+/*
  * A funcao 'main' e o ponto de entrada do programa.
  * Ela declara uma estrutura 'Grafo' e define o numero de vertices ('vertices' = 5).
  * Chama 'inicializaGrafo' para preparar a estrutura.
  * Adiciona algumas arestas ao grafo usando a funcao 'criaGrafo'. Por exemplo, cria uma aresta entre 1 e 2, 3 e 4, e um laco no vertice 0 (0-0).
- * Finalmente, chama 'imprimeGrafo' para exibir a estrutura de lista de adjacencia do grafo.
+ * Finalmente, chama 'imprimeGrafo' para exibir a estrutura de lista de adjacencia do grafo e demonstra o uso das novas funcoes.
  */
 int main(){
   Grafo g;
   int vertices = 5; 
+  int vertice_inicio = 1; // Vertice de inicio para as buscas
   
   inicializaGrafo(&g, vertices);
   
   criaGrafo(&g, 1, 2);
   criaGrafo(&g, 3, 4);
-  criaGrafo(&g, 0, 0);
-  imprimeGrafo(&g);
+  criaGrafo(&g, 0, 0); 
+  criaGrafo(&g, 1, 3); 
+  criaGrafo(&g, 1, 4); 
   
+  printf("## Grafo e Estrutura de Adjacencia\n");
+  imprimeGrafo(&g);
+  printf("--------------------------------------\n");
+
+  printf("## Teste dos Algoritmos de Busca\n");
+  
+  // Teste BFS
+  buscaEmLargura(&g, vertice_inicio);
+  
+  // Teste DFS
+  buscaEmProfundidade(&g, vertice_inicio);
+  printf("--------------------------------------\n");
+
+  // Teste de uma função anterior (grau)
+  printf("Grau do Vertice %d: %d\n", vertice_inicio, grauVertice(&g, vertice_inicio)); 
+  
+  // Liberação de memória
+  // liberaGrafo(&g); 
   
   return 0;
 }
