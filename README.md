@@ -1,6 +1,6 @@
 # Algoritmos e Estrutura de dados em C
 
-Este repositório contém implementações de algoritmos desenvolvidos durante as disciplinas de Algoritmos e Estrutura de Dados na Universidade Federal de Santa Maria (UFSM).
+Este repositório contém implementações de algoritmos e trabalhos desenvolvidos durante as disciplinas de Algoritmos e Estrutura de Dados na Universidade Federal de Santa Maria (UFSM).
 
 ## Conteúdos Abordados
 **Algoritmos**
